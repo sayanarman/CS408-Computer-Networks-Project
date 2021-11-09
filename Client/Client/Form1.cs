@@ -215,6 +215,9 @@ namespace Client
 
                 richTextBox1.AppendText("Asked server to get all sweets so far.\n\n");
 
+                Thread receiveThread = new Thread(Receive);
+                receiveThread.Start();
+
             }
             catch
             {

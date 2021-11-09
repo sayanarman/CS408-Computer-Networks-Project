@@ -25,6 +25,9 @@ namespace Server
         // This is the table to check whether connected client's username to be unique
         ConcurrentDictionary<string, bool> connectedClients = new ConcurrentDictionary<string, bool>();
 
+        // This is the table to check the sweets coming from clients
+        ConcurrentDictionary<string, List<Sweet>> receivedSweets = new ConcurrentDictionary<string, List<Sweet>>();
+
         public Server()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -192,16 +195,68 @@ namespace Server
                     {
                         // SEND SWEETS FROM DATABASE TO CLIENT
                         logs.AppendText("Client " + username + " asks the sweets from server.\n");
-                        
 
+                        // Inform the server side starting the process
+                        logs.AppendText("Server started to send all sweets for user " + username + ".\n");
+
+                        try
+                        {
+                            foreach (string key in receivedSweets.Keys)
+                            {
+                                if (key != username)
+                                {
+                                    foreach (Sweet singleSweet in receivedSweets[key])
+                                    {
+                                        string message = singleSweet.toString();
+
+                                        buffer = Encoding.Default.GetBytes(message);
+
+                                        thisClient.Send(buffer);
+                                    }
+                                }
+                            } 
+                        }
+                        catch
+                        {
+                            logs.AppendText("There is a problem! Check the connection!\n");
+                            terminating = true;
+
+                            textBox_port.Enabled = true;
+                            button_listen.Enabled = true;
+
+                            serverSocket.Close();
+                        }
+
+                        // Inform the server side ending the process
+                        logs.AppendText("Server ended to send all sweets for user " + username + ".\n");
                     }
                     // Otherwise, the user wants to send sweet to the server
                     else
                     {
-                        // ADD THE SWEET TO DATABASE
+                        // Inform the server side
                         logs.AppendText("Client " + username + " wrote a sweet.\n");
 
+                        // create the sweet object
+                        Sweet upcomingSweet = new Sweet(
+                            SweetId: receivedSweets.Count, Username: username,
+                            Sweet: incomingMessage.Substring(5), TimeStamp: DateTime.Now.ToString());
 
+                        // add it to global dictionary
+                        // first check whether this user sent sweet before or not
+                        if (receivedSweets.ContainsKey(username) == false)
+                        {
+                            // Create the sweet list for a user
+                            List <Sweet> sweetList = new List<Sweet>();
+                            sweetList.Add(upcomingSweet);
+                            receivedSweets[username] = sweetList;
+                        }
+                        else
+                        {
+                            receivedSweets[username].Add(upcomingSweet);
+                        }
+
+                        // Inform the server side after adding sweet to hash table
+                        logs.AppendText("Sweet arrived from client " + username + " has been added to database.\n");
                     }
                 }
                 catch
@@ -229,6 +284,27 @@ namespace Server
         private void readSweetsFromTxt()
         {
 
+        }
+    }
+
+    public class Sweet
+    {
+        private string username;
+        private int sweetId;
+        private string timeStamp;
+        private string sweet;
+
+        public Sweet(int SweetId, string Username, string Sweet, string TimeStamp)
+        {
+            this.username = Username;
+            this.sweetId = SweetId;
+            this.timeStamp = TimeStamp;
+            this.sweet = Sweet;
+        }
+
+        public string toString()
+        {
+            return username + " " + sweetId + " " + sweet + " " + timeStamp; 
         }
     }
 }
