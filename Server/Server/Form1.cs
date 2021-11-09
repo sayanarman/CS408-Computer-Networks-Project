@@ -27,6 +27,8 @@ namespace Server
 
         public Server()
         {
+            Control.CheckForIllegalCrossThreadCalls = false;
+            this.FormClosing += new FormClosingEventHandler(Form1_Form1Closing);
             InitializeComponent();
             buildConnectedClientsDict();
         }
@@ -54,6 +56,7 @@ namespace Server
         {
             listening = false;
             terminating = true;
+            serverSocket.Close();
             Environment.Exit(0);
         }
 
@@ -100,6 +103,7 @@ namespace Server
                         connectedClients[incomingUsername] == false)
                     {
                         connectedClients[incomingUsername] = true;
+                        clienSockets.Add(newClient);
 
                         logs.AppendText("A client with username " + incomingUsername + " is connected.\n");
 
@@ -157,6 +161,9 @@ namespace Server
                     else
                     {
                         logs.AppendText("The socket stopped working!\n");
+
+                        textBox_port.Enabled = true;
+                        button_listen.Enabled = true;
                     }
                 }
             }
@@ -176,20 +183,52 @@ namespace Server
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Trim('\0');
-                    logs.AppendText("Client: " + incomingMessage + "\n");
+
+                    string userCommand = incomingMessage.Substring(0, 3);
+
+                    // If the user wants to get sweets until so far, 
+                    //then the incomingMessage should start with get
+                    if (userCommand == "get")
+                    {
+                        // SEND SWEETS FROM DATABASE TO CLIENT
+                        logs.AppendText("Client " + username + " asks the sweets from server.\n");
+                        
+
+                    }
+                    // Otherwise, the user wants to send sweet to the server
+                    else
+                    {
+                        // ADD THE SWEET TO DATABASE
+                        logs.AppendText("Client " + username + " wrote a sweet.\n");
+
+
+                    }
                 }
                 catch
                 {
                     if (!terminating)
                     {
-                        logs.AppendText("A client has disconnected.\n");
+                        logs.AppendText("A client with username " + username + " has disconnected.\n");
                     }
 
                     thisClient.Close();
                     clienSockets.Remove(thisClient);
+                    connectedClients[username] = false;
                     connected = false;
                 }
             }
+        }
+
+        // Will be used after server disconnects
+        private void writeToTxt()
+        {
+
+        }
+
+        // Will be used after initialization
+        private void readSweetsFromTxt()
+        {
+
         }
     }
 }

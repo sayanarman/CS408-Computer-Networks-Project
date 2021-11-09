@@ -127,6 +127,7 @@
             this.button_getSweets.TabIndex = 11;
             this.button_getSweets.Text = "Get Sweets";
             this.button_getSweets.UseVisualStyleBackColor = true;
+            this.button_getSweets.Click += new System.EventHandler(this.button_getSweets_Click);
             // 
             // textBox_sweet
             // 
@@ -146,6 +147,7 @@
             this.button_sendSweet.TabIndex = 13;
             this.button_sendSweet.Text = "Send Sweet";
             this.button_sendSweet.UseVisualStyleBackColor = true;
+            this.button_sendSweet.Click += new System.EventHandler(this.button_sendSweet_Click);
             // 
             // Client
             // 

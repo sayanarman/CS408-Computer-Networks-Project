@@ -83,18 +83,17 @@ namespace Client
                                 textBox_sweet.Enabled = true;
 
                                 connected = true;
-                                richTextBox1.AppendText("Connected to the server.\n");
+                                richTextBox1.AppendText("Connected to the server.\n\n");
 
-                                Thread receiveThread = new Thread(Receive);
-                                receiveThread.Start();
-
+                                //Thread receiveThread = new Thread(Receive);
+                                //receiveThread.Start();
                             }
                         }
                         catch
                         {
                             if (!terminating)
                             {
-                                richTextBox1.AppendText("Server has disconnected!\n");
+                                richTextBox1.AppendText("Server has disconnected!\n\n");
 
                                 button_connect.Enabled = true;
                             }
@@ -106,17 +105,17 @@ namespace Client
 
                     else
                     {
-                        richTextBox1.AppendText("Username field can not be empty!\n");
+                        richTextBox1.AppendText("Username field can not be empty!\n\n");
                     }
                 }
                 catch
                 {
-                    richTextBox1.AppendText("Could not connect to the server!\n");
+                    richTextBox1.AppendText("Could not connect to the server!\n\n");
                 }
             }
             else
             {
-                richTextBox1.AppendText("Check the IP and Port Number!\n");
+                richTextBox1.AppendText("Check the IP and Port Number!\n\n");
             }
         }
 
@@ -145,14 +144,96 @@ namespace Client
                     {
                         richTextBox1.AppendText("Server has disconnected!\n");
 
+                        button_sendSweet.Enabled = false;
+                        button_getSweets.Enabled = false;
+                        textBox_sweet.Enabled = false;
                         button_connect.Enabled = true;
-                        //textBox_message.Enabled = false;
-                        //button_send.Enabled = true;
+                        textBox_ip.Enabled = true;
+                        textBox_port.Enabled = true;
+                        textBox_username.Enabled = true;
                     }
 
                     clientSocket.Close();
                     connected = false;
                 }
+            }
+        }
+
+        private void button_sendSweet_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string message = textBox_sweet.Text;
+
+
+                if (message != "")
+                {
+                    Byte[] buffer = Encoding.Default.GetBytes("send " + message);
+
+                    clientSocket.Send(buffer);
+
+                    richTextBox1.AppendText("Sent sweet to server like this: " + message + "\n\n");
+
+                    textBox_sweet.Clear();
+                }
+
+                else
+                {
+                    richTextBox1.AppendText("Please enter a sweet before clicking send button!\n\n");
+                }
+            }
+            catch
+            {
+                if (!terminating)
+                {
+                    richTextBox1.AppendText("Server has disconnected!\n\n");
+
+                    button_sendSweet.Enabled = false;
+                    button_getSweets.Enabled = false;
+                    textBox_sweet.Enabled = false;
+                    textBox_sweet.Clear();
+                    button_connect.Enabled = true;
+                    textBox_ip.Enabled = true;
+                    textBox_port.Enabled = true;
+                    textBox_username.Enabled = true;
+                }
+
+                clientSocket.Close();
+                connected = false;
+            }
+        }
+
+        private void button_getSweets_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string message = "get ";
+
+                Byte[] buffer = Encoding.Default.GetBytes(message);
+
+                clientSocket.Send(buffer);
+
+                richTextBox1.AppendText("Asked server to get all sweets so far.\n\n");
+
+            }
+            catch
+            {
+                if (!terminating)
+                {
+                    richTextBox1.AppendText("Server has disconnected!\n\n");
+
+                    button_sendSweet.Enabled = false;
+                    button_getSweets.Enabled = false;
+                    textBox_sweet.Enabled = false;
+                    textBox_sweet.Clear();
+                    button_connect.Enabled = true;
+                    textBox_ip.Enabled = true;
+                    textBox_port.Enabled = true;
+                    textBox_username.Enabled = true;
+                }
+
+                clientSocket.Close();
+                connected = false;
             }
         }
     }
