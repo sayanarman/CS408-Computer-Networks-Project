@@ -34,6 +34,7 @@ namespace Server
             this.FormClosing += new FormClosingEventHandler(Form1_Form1Closing);
             InitializeComponent();
             buildConnectedClientsDict();
+            readSweetsFromTxt();
         }
 
         private void buildConnectedClientsDict()
@@ -60,6 +61,7 @@ namespace Server
             listening = false;
             terminating = true;
             serverSocket.Close();
+            writeToTxt();
             Environment.Exit(0);
         }
 
@@ -172,7 +174,6 @@ namespace Server
             }
         }
 
-        // NOT WORKING CORRECTLY
         private void Receive(Socket thisClient, string username)
         {
             bool connected = true;
@@ -277,22 +278,45 @@ namespace Server
         // Will be used after server disconnects
         private void writeToTxt()
         {
+            List<String> lines = new List<String>();
 
+            foreach (List<Sweet> userSweets in receivedSweets.Values)
+                foreach (Sweet sweet in userSweets)
+                    lines.Add(sweet.toString());
+
+            System.IO.File.WriteAllLines("sweet-db.txt", lines);
         }
 
         // Will be used after initialization
         private void readSweetsFromTxt()
         {
+            try
+            {
+                string[] lines = System.IO.File.ReadAllLines("sweet-db.txt");
 
+                foreach (string line in lines)
+                {
+                    Sweet newSweet = new Sweet(line);
+
+                    var sweetOfUser = receivedSweets.GetOrAdd(newSweet.username, new List<Sweet> { });
+                    sweetOfUser.Add(newSweet);
+                }
+
+                Console.WriteLine("Dict is created.\n");
+            }
+            catch
+            {
+                Console.WriteLine("Sweet databse is not found!.\n");
+            }
         }
     }
 
     public class Sweet
     {
-        private string username;
-        private int sweetId;
-        private string timeStamp;
-        private string sweet;
+        public string username;
+        public int sweetId;
+        public string timeStamp;
+        public string sweet;
 
         public Sweet(int SweetId, string Username, string Sweet, string TimeStamp)
         {
@@ -302,9 +326,26 @@ namespace Server
             this.sweet = Sweet;
         }
 
+        public Sweet(string lineInfo)
+        {
+            string[] properties = lineInfo.Split('\t');
+
+            try
+            {
+                this.username = properties[0];
+                this.sweetId = Int32.Parse(properties[1]);
+                this.timeStamp = properties[2];
+                this.sweet = properties[3];
+            }
+            catch
+            {
+                // fill later
+            }
+        }
+
         public string toString()
         {
-            return username + " " + sweetId + " " + sweet + " " + timeStamp; 
+            return username + '\t' + sweetId + '\t' + sweet + '\t' + timeStamp; 
         }
     }
 }
