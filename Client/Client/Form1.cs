@@ -121,22 +121,37 @@ namespace Client
 
         private void Receive()
         {
+            button_getSweets.Enabled = false;
+
+            listView1.Items.Clear();
+
             while (connected)
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
+                    Byte[] sizeBuffer = new Byte[4];
+                    clientSocket.Receive(sizeBuffer);
 
-                    // receive the message coming from the server
-                    clientSocket.Receive(buffer);
+                    if (BitConverter.IsLittleEndian)
+                        Array.Reverse(sizeBuffer);
+
+                    uint size = BitConverter.ToUInt32(sizeBuffer, 0);
+
+                    if (size == 0)
+                        break;
+
+                    Byte[] resultBuffer = new byte[size];
+                    clientSocket.Receive(resultBuffer);
 
                     // parse the byte array into string
-                    string incomingMessage = Encoding.Default.GetString(buffer);
+                    string incomingMessage = Encoding.Default.GetString(resultBuffer);
 
                     // discard the \0 bytes
                     incomingMessage = incomingMessage.Trim('\0');
 
-                    richTextBox1.AppendText("Server: " + incomingMessage + "\n");
+                    addSweetToList(new Sweet(incomingMessage));
+
+                    //richTextBox1.AppendText("Server: " + incomingMessage + "\n");
                 }
                 catch
                 {
@@ -152,11 +167,14 @@ namespace Client
                         textBox_port.Enabled = true;
                         textBox_username.Enabled = true;
                     }
+                    richTextBox1.AppendText("Server: All sweets are send " + "\n");
 
                     clientSocket.Close();
                     connected = false;
                 }
             }
+            button_getSweets.Enabled = true;
+            richTextBox1.AppendText("Server: All sweets send" + "\n");
         }
 
         private void button_sendSweet_Click(object sender, EventArgs e)
@@ -239,5 +257,54 @@ namespace Client
                 connected = false;
             }
         }
+
+        private void addSweetToList(Sweet sweet)
+        {
+
+            string[] row = { sweet.sweetId.ToString(), sweet.username, sweet.timeStamp, sweet.sweet };
+
+
+            listView1.Items.Add(new ListViewItem (row));
+        }
+    }
+
+    public class Sweet
+    {
+        public string username;
+        public int sweetId;
+        public string timeStamp;
+        public string sweet;
+
+        public Sweet(int SweetId, string Username, string Sweet, string TimeStamp)
+        {
+            this.username = Username;
+            this.sweetId = SweetId;
+            this.timeStamp = TimeStamp;
+            this.sweet = Sweet;
+        }
+
+        public Sweet(string lineInfo)
+        {
+            string[] properties = lineInfo.Split('\t');
+
+            try
+            {
+                this.username = properties[0];
+                this.sweetId = Int32.Parse(properties[1]);
+                this.timeStamp = properties[2];
+                this.sweet = properties[3];
+            }
+            catch
+            {
+                // fill later
+            }
+        }
+
+        public string toString()
+        {
+            return username + '\t' + sweetId + '\t' + timeStamp + '\t' + sweet;
+        }
     }
 }
+
+

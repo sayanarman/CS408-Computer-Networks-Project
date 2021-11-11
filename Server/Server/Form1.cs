@@ -210,12 +210,22 @@ namespace Server
                                     {
                                         string message = singleSweet.toString();
 
+                                        uint length = (uint) message.Length;
+
+                                        var sizeBuffer = BitConverter.GetBytes(length);
+
+                                        if (BitConverter.IsLittleEndian)
+                                            Array.Reverse(sizeBuffer);
+
+                                        thisClient.Send(sizeBuffer);
+
                                         buffer = Encoding.Default.GetBytes(message);
 
                                         thisClient.Send(buffer);
                                     }
                                 }
-                            } 
+                            }
+                            thisClient.Send(BitConverter.GetBytes(0));
                         }
                         catch
                         {
@@ -309,6 +319,8 @@ namespace Server
                 Console.WriteLine("Sweet databse is not found!.\n");
             }
         }
+
+     
     }
 
     public class Sweet
@@ -338,14 +350,14 @@ namespace Server
                 this.sweet = properties[3];
             }
             catch
-            {
+            { 
                 // fill later
             }
         }
 
         public string toString()
         {
-            return username + '\t' + sweetId + '\t' + sweet + '\t' + timeStamp; 
+            return username + '\t' + sweetId + '\t' + timeStamp + '\t' + sweet; 
         }
     }
 }

@@ -40,7 +40,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(143, 132);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(138, 25);
+            this.label4.Size = new System.Drawing.Size(102, 20);
             this.label4.TabIndex = 0;
             this.label4.Text = "Port Number:";
             // 
@@ -49,7 +49,7 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(143, 219);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(240, 25);
+            this.label5.Size = new System.Drawing.Size(174, 20);
             this.label5.TabIndex = 1;
             this.label5.Text = "Activity Monitor on Port:";
             // 
@@ -66,7 +66,7 @@
             // 
             this.textBox_port.Location = new System.Drawing.Point(299, 129);
             this.textBox_port.Name = "textBox_port";
-            this.textBox_port.Size = new System.Drawing.Size(438, 31);
+            this.textBox_port.Size = new System.Drawing.Size(438, 26);
             this.textBox_port.TabIndex = 3;
             // 
             // button_listen

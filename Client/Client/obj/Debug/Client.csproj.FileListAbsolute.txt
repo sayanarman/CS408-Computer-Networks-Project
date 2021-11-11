@@ -8,3 +8,12 @@ C:\Users\Sayan\Documents\Arman Sayan\CS408 Fall 2021-2022\Project\Project Files\
 C:\Users\Sayan\Documents\Arman Sayan\CS408 Fall 2021-2022\Project\Project Files\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.exe
 C:\Users\Sayan\Documents\Arman Sayan\CS408 Fall 2021-2022\Project\Project Files\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.pdb
 C:\Users\Sayan\Documents\Arman Sayan\CS408 Fall 2021-2022\Project\Project Files\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.Client.resources
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\bin\Debug\Client.exe.config
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\bin\Debug\Client.exe
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\bin\Debug\Client.pdb
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.Client.resources
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.Properties.Resources.resources
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.csproj.GenerateResource.cache
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.exe
+C:\Users\erhan\Documents\GitHub\CS408-Computer-Networks-Project\Client\Client\obj\Debug\Client.pdb
