@@ -26,7 +26,7 @@ namespace Server
         ConcurrentDictionary<string, bool> connectedClients = new ConcurrentDictionary<string, bool>();
 
         // This is the table to check the sweets coming from clients
-        ConcurrentDictionary<string, List<Sweet>> receivedSweets = new ConcurrentDictionary<string, List<Sweet>>();
+        ConcurrentDictionary<string, ConcurrentBag<Sweet>> receivedSweets = new ConcurrentDictionary<string, ConcurrentBag<Sweet>>();
 
         public Server()
         {
@@ -35,6 +35,15 @@ namespace Server
             InitializeComponent();
             buildConnectedClientsDict();
             readSweetsFromTxt();
+        }
+
+        private int getSweetCount()
+        {
+            int total = 0;
+            foreach(var sweetBag in receivedSweets.Values)
+                total += sweetBag.Count;
+            
+            return total;
         }
 
         private void buildConnectedClientsDict()
@@ -249,7 +258,7 @@ namespace Server
 
                         // create the sweet object
                         Sweet upcomingSweet = new Sweet(
-                            SweetId: receivedSweets.Count, Username: username,
+                            SweetId: getSweetCount(), Username: username,
                             Sweet: incomingMessage.Substring(5), TimeStamp: DateTime.Now.ToString());
 
                         // add it to global dictionary
@@ -257,7 +266,7 @@ namespace Server
                         if (receivedSweets.ContainsKey(username) == false)
                         {
                             // Create the sweet list for a user
-                            List <Sweet> sweetList = new List<Sweet>();
+                            ConcurrentBag<Sweet> sweetList = new ConcurrentBag<Sweet>();
                             sweetList.Add(upcomingSweet);
                             receivedSweets[username] = sweetList;
                         }
@@ -290,7 +299,7 @@ namespace Server
         {
             List<String> lines = new List<String>();
 
-            foreach (List<Sweet> userSweets in receivedSweets.Values)
+            foreach (ConcurrentBag<Sweet> userSweets in receivedSweets.Values)
                 foreach (Sweet sweet in userSweets)
                     lines.Add(sweet.toString());
 
@@ -308,7 +317,7 @@ namespace Server
                 {
                     Sweet newSweet = new Sweet(line);
 
-                    var sweetOfUser = receivedSweets.GetOrAdd(newSweet.username, new List<Sweet> { });
+                    var sweetOfUser = receivedSweets.GetOrAdd(newSweet.username, new ConcurrentBag<Sweet> { });
                     sweetOfUser.Add(newSweet);
                 }
 
